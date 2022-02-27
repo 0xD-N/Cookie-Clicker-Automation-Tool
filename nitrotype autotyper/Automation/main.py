@@ -1,6 +1,7 @@
 import Automation
 import time
 
+
 if __name__ == "__main__":
     
     SITE = "https://orteil.dashnet.org/cookieclicker/"
