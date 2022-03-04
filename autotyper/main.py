@@ -74,18 +74,17 @@ def start(clicksPerSecond = 1):
                 length = len(upgrades)
                 
                 while index < length:
-                    
+
                     try:
                         if("enabled" in upgrades[index].get_attribute("class")):
                             upgrades[index].click()
                         index += 1
-                            
+                    
+                    
                     except StaleElementReferenceException:
-                        
                         upgrades = getElement(A, "//*[@id=\"upgrades\"]//div", True)
-                        upgrades[index].click()
                         length = len(upgrades)
-                        index += 1
+                        index = 0
                         
             else:
                 
@@ -103,11 +102,17 @@ def start(clicksPerSecond = 1):
                     
                     price = int(content_div.find_element(By.CLASS_NAME, "price").text.replace(",", "").split("\n")[0])
                     
-                    if(cookie_amount >= price):
-                        products[i].click()
-                        upgrades = getElement(A, "//*[@id=\"upgrades\"]//div", True)
-                    
-            
+                    if cookie_amount < price: continue
+                    else:
+                        while cookie_amount >= price:
+                            
+                            products[i].click()
+                            cookie_amount = int(output.text[:output.text.index(" ")].replace("\n", "").replace(",", "")) 
+                            
+                            if cookie_amount < price: 
+                                upgrades = getElement(A, "//*[@id=\"upgrades\"]//div", True)
+                                break
+                            
         os.system("cls")
         A.quit()
         
@@ -123,7 +128,7 @@ def start(clicksPerSecond = 1):
 # //*//span[contains(@id, "productPrice") and @class="price"]//ancestor::div[contains(@class, "product")]     
     
 if __name__ == "__main__":
-    start(5)
+    start(200)
     
 
 
