@@ -1,13 +1,9 @@
 from selenium.webdriver.opera.webdriver import WebDriver
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import TimeoutException
 from Automation.Automation import Automation
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from threading import Thread
-import wget
-from bs4 import BeautifulSoup
 import time
 import os
 
@@ -21,7 +17,7 @@ def getElement(driver: WebDriver, xPath, multiple=False, wait=10) -> WebElement:
             code: WebElement = (WebDriverWait(driver, wait).until(lambda d: d.find_element(By.XPATH, xPath)))
             return code
             
-    except TimeoutException as t:
+    except TimeoutException:
         
         driver.close()
         time.sleep(1)
@@ -44,13 +40,9 @@ def start(clicksPerSecond = 1):
     
     A = Automation().getDriver()
     
-    soup = None
-    
     try:
         
         A.get(SITE)
-        
-        soup = BeautifulSoup(f"{A.page_source}", "html.parser")
         
         cookie = getElement(A, "(//*[@id=\"bigCookie\"])")
         
