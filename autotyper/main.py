@@ -1,6 +1,7 @@
 from selenium.webdriver.opera.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 from Automation.Automation import Automation
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -48,26 +49,63 @@ def start(clicksPerSecond = 1):
         
         output = getElement(A, "//*[@id=\"cookies\"]")
         
+        while(cookie.is_displayed() == False):
+            A.implicitly_wait(1)
+        
+        while(output.is_displayed() == False):
+            A.implicitly_wait(1)
+            
         cookie_amount = int(output.text[:output.text.index(" ")])
         
         products = getElement(A, "//*//span[contains(@id, \"productPrice\") and @class=\"price\"]//ancestor::div[contains(@class, \"product\")]", True)
         
-        while(cookie_amount < 100000):
+        upgrades = None
+        
+        while(cookie_amount < 10000000):
             
             for i in range(clicksPerSecond):
                 cookie.click()
             
             cookie_amount = int(output.text[:output.text.index(" ")].replace("\n", "").replace(",", ""))
             
+            if not upgrades == None:
+                
+                index = 0
+                length = len(upgrades)
+                
+                while index < length:
+                    
+                    try:
+                        if("enabled" in upgrades[index].get_attribute("class")):
+                            upgrades[index].click()
+                        index += 1
+                            
+                    except StaleElementReferenceException:
+                        
+                        upgrades = getElement(A, "//*[@id=\"upgrades\"]//div", True)
+                        upgrades[index].click()
+                        length = len(upgrades)
+                        index += 1
+                        
+            else:
+                
+                cursor_upgrade_amount = products[0].find_element(By.CLASS_NAME, "content").find_element(By.ID, "productOwned0").text.split("\n")[0]
+                
+                if len(cursor_upgrade_amount) != 0:
+                    if(int(cursor_upgrade_amount) >= 1):
+                        upgrades = getElement(A, "//*[@id=\"upgrades\"]//div", True)
+                          
             for i in range(len(products)-1, -1, -1):
                
                 if("unlocked" in products[i].get_attribute("class")):
+                    
                     content_div = products[i].find_element(By.CLASS_NAME, "content")
                     
                     price = int(content_div.find_element(By.CLASS_NAME, "price").text.replace(",", "").split("\n")[0])
                     
                     if(cookie_amount >= price):
                         products[i].click()
+                        upgrades = getElement(A, "//*[@id=\"upgrades\"]//div", True)
                     
             
         os.system("cls")
@@ -85,7 +123,7 @@ def start(clicksPerSecond = 1):
 # //*//span[contains(@id, "productPrice") and @class="price"]//ancestor::div[contains(@class, "product")]     
     
 if __name__ == "__main__":
-    start(2)
+    start(5)
     
 
 
