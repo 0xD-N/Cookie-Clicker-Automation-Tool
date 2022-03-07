@@ -190,7 +190,7 @@ def start(clicksPerSecond = 1):
         #cookies per second
         cookies_per_second = getCookiesPerSecond(output)
         
-        #while cookies less than 10 million run
+        #while cookies less than 10 million run. You can definitely set this to a much higher value but I won't debug that far.
         while(float(cookie_amount) < 10000000):
         
             try: 
