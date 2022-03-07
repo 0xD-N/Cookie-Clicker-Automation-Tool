@@ -1,2 +1,2 @@
 # Nitrotype autotype
- Tool that autotypes on Nitrotype.com
+ Tool that autotypes on https://orteil.dashnet.org/cookieclicker/
